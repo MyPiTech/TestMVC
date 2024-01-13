@@ -7,25 +7,17 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
-/*builder.Services.AddHttpClient("TestApi", httpClient =>
-{
-    httpClient.BaseAddress = new Uri("https://swcoretestapi.azurewebsites.net/");
-    httpClient.DefaultRequestHeaders.Add(HeaderNames.Accept, "application/json");   
-});
-builder.Services.AddHttpClient("DevTestApi", httpClient =>
-{
-    httpClient.BaseAddress = new Uri("https://localhost:7013/");
-    httpClient.DefaultRequestHeaders.Add(HeaderNames.Accept, "application/json");
-});*/
-
+var apiBase = builder.Configuration.GetValue<string>("ApiBase");
 builder.Services.AddHttpClient<ApiService<UserDto>>(
     client =>
     {
+        client.BaseAddress = new Uri(apiBase);
         client.DefaultRequestHeaders.Add(HeaderNames.Accept, "application/json");
     });
 builder.Services.AddHttpClient<ApiService<EventDto>>(
     client =>
     {
+        client.BaseAddress = new Uri(apiBase);
         client.DefaultRequestHeaders.Add(HeaderNames.Accept, "application/json");
     });
 

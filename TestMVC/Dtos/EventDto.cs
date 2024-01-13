@@ -5,13 +5,13 @@ namespace TestMVC.Dtos
     [ApiRoute("/Users/{uId}/Events")]
     public class EventDto
     {
-        [ApiId("id", true)]
+        [ApiKey]
         public int Id { get; set; }
-        [ApiId("uId")]
+        [ApiKey("uId")]
         public int UserId { get; set; }
-        public string? Title { get; set; }
-        public string? Location { get; set; }
-        public DateTime? Start { get; set; }
-        public int? Duration { get; set; }
+        public string Title { get; set; } = string.Empty;
+        public string Location { get; set; } = string.Empty;
+        public DateTime Start { get; set; }
+        public int Duration { get; set; }
     }
 }

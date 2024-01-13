@@ -1,0 +1,70 @@
+﻿@using TestMVC.Dtos;
+@model DataModel<EventDto>
+@{
+    ViewData["Title"] = "Events Page";
+}
+
+<div class="text-center">
+    <h1 class="display-4">Events</h1>
+    <div class="flex-container">
+        <div class="flex-child">
+            <a asp-action="index" asp-controller="users" class="alnleft">&lt;&lt; Users</a>
+        </div>
+        <div class="flex-child">
+            <button class="addButton" role="button">+ Event</button>
+        </div>
+    </div>
+    
+    <table id="dataTable" class="display">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Title</th>
+                <th>Location</th>
+                <th>Start</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model.Data != null)
+            {
+                @foreach (var data in Model.Data)
+                {
+                    <tr class="alntxtleft">
+                        <td>@data.Id</td>
+                        <td>@data.Title</td>
+                        <td>@data.Location</td>
+                        <td>@data.Start.ToString("d")</td>
+                    </tr>
+                }
+            }
+            else
+            {
+                <tr class="alntxtleft">
+                    <td colspan="3">No Users Found</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<script>
+    $(document).ready(function () {
+        var table = $('#dataTable').DataTable(
+            {
+                "lengthChange": false,
+                "paging": false,
+                "searching": false,
+                "info": false,
+                "scrollx": false
+            });
+
+        $('#dataTable tbody').on('click', 'tr', function () {
+            console.log(table.row(this).data()[0]);
+        });
+        function events(id) {
+            var url = '@Url.Action("Details", "ExpiationOffences", new {userId = "_id" })';
+            var urlWithId = url.replace('_id', id);
+            window.location.href = urlWithId;
+        }
+    });
+</script>

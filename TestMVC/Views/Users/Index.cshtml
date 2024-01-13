@@ -1,0 +1,64 @@
+﻿@using TestMVC.Dtos;
+@model DataModel<UserDto>
+@{
+    ViewData["Title"] = "Users Page";
+}
+
+<div class="text-center">
+    <h1 class="display-4">Users</h1>
+    <div>
+        <button class="addButton" role="button">+ User</button>
+    </div>
+    
+    <table id="userTable" class="display">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Last Name</th>
+                <th>First Name</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model.Data != null)
+            {
+                @foreach (var user in Model.Data)
+                {
+                    <tr class="alntxtleft">
+                        <td>@user.Id</td>
+                        <td>@user.LastName</td>
+                        <td>@user.FirstName</td>
+                    </tr>
+                }
+            }
+            else
+            {
+                <tr class="alntxtleft">
+                    <td colspan="3">No Users Found</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<script>
+    $(document).ready(function () {
+        var table = $('#userTable').DataTable(
+            {
+                "lengthChange": false,
+                "paging": false,
+                "searching": false,
+                "info": false,
+                "scrollx": false
+            });
+
+        $('#userTable tbody').on('click', 'tr', function () {
+            console.log(table.row(this).data()[0]);
+            events(table.row(this).data()[0]);
+        });
+        function events(id) {
+            var url = '@Url.Action("Index", "Events", new {userId = "_id" })';
+            var urlWithId = url.replace('_id', id);
+            window.location.href = urlWithId;
+        }
+    });
+</script>

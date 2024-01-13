@@ -1,33 +1,27 @@
-﻿using System.Linq.Expressions;
-using System.Reflection;
+﻿using System.Reflection;
 using System.Text.Json;
-using System.Text.RegularExpressions;
 using TestMVC.Attributes;
-using TestMVC.Dtos;
+
 
 namespace TestMVC.Services
 {
     public sealed class ApiService<R> where R : class
     {
-        private readonly IWebHostEnvironment _environment;
         private readonly ILogger<ApiService<R>> _logger;
-        private readonly string _apiClientBase;
         private readonly HttpClient _client;
 
-        public ApiService(HttpClient httpClient, IWebHostEnvironment environment, ILogger<ApiService<R>> logger)
+        public ApiService(HttpClient httpClient, ILogger<ApiService<R>> logger)
         {
             _client = httpClient;
-            _environment = environment;
             _logger = logger;
-            _apiClientBase = _environment.IsDevelopment() ? "https://localhost:7013/" : "https://swcoretestapi.azurewebsites.net/";
-            _client.BaseAddress = new Uri(_apiClientBase);
         }
 
         public async Task<R[]?> GetAll(CancellationToken token = default)
         { 
             return await GetAll(null, token);
         }
-            public async Task<R[]?> GetAll(Func<R>? newR = null, CancellationToken token = default)
+
+        public async Task<R[]?> GetAll(Func<R>? newR = null, CancellationToken token = default)
         {
             try
             {
@@ -39,7 +33,7 @@ namespace TestMVC.Services
             }
             catch (Exception ex)
             {
-                _logger.LogError("Error getting something fun to say: {Error}", ex);
+                _logger.LogError(ex.Message);
             }
             return null;
         }
@@ -60,7 +54,8 @@ namespace TestMVC.Services
             }
             return null;
         }
-        private static string GetRoute(Type t, Func<R>? newR, bool appendDefault = false)
+
+        private static string GetRoute(Type t, Func<R>? newR, bool appendPrimary = false)
         {
             if (Attribute.GetCustomAttribute(t, typeof(ApiRouteAttribute)) is not ApiRouteAttribute apiRoute) 
                 throw new Exception("Route not found.");
@@ -69,20 +64,20 @@ namespace TestMVC.Services
 
             if (newR != null) {
                 var returnDto = newR();
-                var props = t.GetProperties().Where(p => Attribute.IsDefined(p, typeof(ApiIdAttribute)));
+                var props = t.GetProperties().Where(p => Attribute.IsDefined(p, typeof(ApiKeyAttribute)));
                 foreach (var prop in props)
                 {
-                    var idAttribute = prop.GetCustomAttribute<ApiIdAttribute>();
+                    var idAttribute = prop.GetCustomAttribute<ApiKeyAttribute>();
                     if (idAttribute != null)
                     {
                         var value = prop.GetValue(returnDto);
-                        if (idAttribute.IsDefault && appendDefault)
+                        if (idAttribute.IsPrimary && appendPrimary)
                         {
                             route = $"{route}/{value}";
                         }
                         else 
                         {
-                            var pattern = $@"{{{idAttribute.IdName}}}";
+                            var pattern = $"{{{idAttribute.ApiRouteParam}}}";
                             route = route.Replace(pattern, value?.ToString() ?? string.Empty);
                         }
                     }
