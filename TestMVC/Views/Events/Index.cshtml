@@ -13,18 +13,18 @@
             <button class="addButton" role="button">+ Event</button>
         </div>
     </div>
-    <table id="dataTable" class="display">
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Title</th>
-                <th>Location</th>
-                <th>Start</th>
-            </tr>
-        </thead>
-        <tbody>
-            @if (Model.Data != null)
-            {
+    @if (Model.Data != null)
+    {
+        <table id="dataTable" class="display">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Title</th>
+                    <th>Location</th>
+                    <th>Start</th>
+                </tr>
+            </thead>
+            <tbody>
                 @foreach (var data in Model.Data)
                 {
                     <tr class="alntxtleft">
@@ -34,15 +34,13 @@
                         <td>@data.Start.ToString("d")</td>
                     </tr>
                 }
-            }
-            else
-            {
-                <tr class="alntxtleft">
-                    <td colspan="3">No Events Found</td>
-                </tr>
-            }
-        </tbody>
-    </table>
+            </tbody>
+        </table>
+    }
+    else
+    {
+        <p>No Events Found</p>
+    }
 </div>
 
 <script>
