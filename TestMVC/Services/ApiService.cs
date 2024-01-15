@@ -67,17 +67,17 @@ namespace TestMVC.Services
                 var props = t.GetProperties().Where(p => Attribute.IsDefined(p, typeof(ApiKeyAttribute)));
                 foreach (var prop in props)
                 {
-                    var idAttribute = prop.GetCustomAttribute<ApiKeyAttribute>();
-                    if (idAttribute != null)
+                    var keyAttribute = prop.GetCustomAttribute<ApiKeyAttribute>();
+                    if (keyAttribute != null)
                     {
                         var value = prop.GetValue(returnDto);
-                        if (idAttribute.IsPrimary && appendPrimary)
+                        if (keyAttribute.IsPrimary && appendPrimary)
                         {
                             route = $"{route}/{value}";
                         }
                         else 
                         {
-                            var pattern = $"{{{idAttribute.ApiRouteParam}}}";
+                            var pattern = $"{{{keyAttribute.ApiRouteParam}}}";
                             route = route.Replace(pattern, value?.ToString() ?? string.Empty);
                         }
                     }

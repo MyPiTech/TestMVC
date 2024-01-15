@@ -3,7 +3,6 @@
 @{
     ViewData["Title"] = "Events Page";
 }
-
 <div class="text-center">
     <h1 class="display-4">Events</h1>
     <div class="flex-container">
@@ -14,7 +13,6 @@
             <button class="addButton" role="button">+ Event</button>
         </div>
     </div>
-    
     <table id="dataTable" class="display">
         <thead>
             <tr>
@@ -40,7 +38,7 @@
             else
             {
                 <tr class="alntxtleft">
-                    <td colspan="3">No Users Found</td>
+                    <td colspan="3">No Events Found</td>
                 </tr>
             }
         </tbody>
@@ -57,14 +55,5 @@
                 "info": false,
                 "scrollx": false
             });
-
-        $('#dataTable tbody').on('click', 'tr', function () {
-            console.log(table.row(this).data()[0]);
-        });
-        function events(id) {
-            var url = '@Url.Action("Details", "ExpiationOffences", new {userId = "_id" })';
-            var urlWithId = url.replace('_id', id);
-            window.location.href = urlWithId;
-        }
     });
 </script>
