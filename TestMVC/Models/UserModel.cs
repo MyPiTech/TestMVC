@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using TestMVC.Dtos;
 
 namespace TestMVC.Models
 {
@@ -13,11 +14,12 @@ namespace TestMVC.Models
         public string? FirstName { get; set; }
 
         [Required(ErrorMessage = "Last Name is required.")]
-        [Display(Name = "Last Nmae")]
+        [Display(Name = "Last Name")]
         public string? LastName { get; set; }
 
+        [Display(Name = "Notes ")]
         public string? Notes { get; set; }
 
-
+        public UserDto ToDto() => new UserDto { Id = Id, FirstName = FirstName, LastName = LastName, Notes = Notes };
     }
 }

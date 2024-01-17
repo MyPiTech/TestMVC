@@ -67,3 +67,9 @@ body {
     border: 1px solid green;
     padding: 10px;
 }
+
+.formfield {
+    display: flex;
+    align-items: center;
+    vertical-align: middle;
+}

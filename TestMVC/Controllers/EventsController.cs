@@ -17,7 +17,7 @@ namespace TestMVC.Controllers
         }
         public async Task<IActionResult> IndexAsync(int userId, CancellationToken token)
         {
-            var events = await _eventApiService.GetAll(()=> new EventDto { UserId = userId },token);
+            var events = await _eventApiService.GetAllAsync(()=> new EventDto { UserId = userId },token);
             return View(new DataModel<EventDto> { Data = events });
         }
 
