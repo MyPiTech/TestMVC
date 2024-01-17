@@ -1,5 +1,5 @@
 ﻿@using TestMVC.Dtos;
-@model DataModel<EventDto>
+@model EventsModel;
 @{
     ViewData["Title"] = "Events Page";
 }
@@ -10,7 +10,7 @@
             <a asp-action="index" asp-controller="users" class="alnleft">&lt;&lt; Users</a>
         </div>
         <div class="flex-child">
-            <button class="addButton" role="button">+ Event</button>
+            <button class="addButton" role="button" onclick="create();">+ Event</button>
         </div>
     </div>
     @if (Model.Data != null)
@@ -22,6 +22,7 @@
                     <th>Title</th>
                     <th>Location</th>
                     <th>Start</th>
+                    <th>Actions</th>
                 </tr>
             </thead>
             <tbody>
@@ -32,6 +33,10 @@
                         <td>@data.Title</td>
                         <td>@data.Location</td>
                         <td>@data.Start.ToString("d")</td>
+                        <td>
+                            <a href="@Url.Action("Event", "Events", new { id = data.Id, userId = data.UserId })" title="Edit"><i class="material-icons">edit</i></a>
+                            <a href="@Url.Action("Delete", "Events", new { id = data.Id, userId = data.UserId })" title="Delete"><i class="material-icons">delete</i></a>
+                        </td>
                     </tr>
                 }
             </tbody>
@@ -54,4 +59,8 @@
                 "scrollx": false
             });
     });
+    function create() {
+        var url = '@Url.Action("Event", "Events", new {id = 0, userId = Model.UserId })';
+        window.location.href = url;
+    }
 </script>

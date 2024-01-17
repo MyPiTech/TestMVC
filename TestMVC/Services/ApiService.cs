@@ -9,11 +9,15 @@ namespace TestMVC.Services
     {
         private readonly ILogger<ApiService<R>> _logger;
         private readonly HttpClient _client;
+        private readonly JsonSerializerOptions _JsonReadOptions;
+        private readonly JsonSerializerOptions _JsonWriteOptions;
 
         public ApiService(HttpClient httpClient, ILogger<ApiService<R>> logger)
         {
             _client = httpClient;
             _logger = logger;
+            _JsonReadOptions = new JsonSerializerOptions(JsonSerializerDefaults.Web);
+            _JsonWriteOptions = new JsonSerializerOptions { DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.Never };
         }
 
         public async Task<R[]?> GetAllAsync(CancellationToken token = default)
@@ -27,7 +31,7 @@ namespace TestMVC.Services
             {
                 var apiRoute = GetRoute(newR);
 
-                R[]? response = await _client.GetFromJsonAsync<R[]>(apiRoute, new JsonSerializerOptions(JsonSerializerDefaults.Web), token);
+                R[]? response = await _client.GetFromJsonAsync<R[]>(apiRoute, _JsonReadOptions, token);
 
                 return response;
             }
@@ -44,7 +48,7 @@ namespace TestMVC.Services
             {
                 var apiRoute = GetRoute(newR, true);
 
-                R? response = await _client.GetFromJsonAsync<R>(apiRoute, new JsonSerializerOptions(JsonSerializerDefaults.Web), token);
+                R? response = await _client.GetFromJsonAsync<R>(apiRoute, _JsonReadOptions, token);
 
                 return response;
             }
@@ -59,7 +63,7 @@ namespace TestMVC.Services
             try
             {
                 var apiRoute = GetRoute(dto);
-                await _client.PostAsJsonAsync(apiRoute, dto, token);
+                await _client.PostAsJsonAsync(apiRoute, dto, _JsonWriteOptions, token);
             }
             catch (Exception ex)
             {
@@ -72,7 +76,7 @@ namespace TestMVC.Services
             try
             {
                 var apiRoute = GetRoute(dto, true);
-                await _client.PutAsJsonAsync(apiRoute, dto, token);
+                await _client.PutAsJsonAsync(apiRoute, dto, _JsonWriteOptions, token);
             }
             catch (Exception ex)
             {

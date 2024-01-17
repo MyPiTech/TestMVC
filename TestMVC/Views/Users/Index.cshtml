@@ -6,7 +6,7 @@
 <div class="text-center">
     <h1 class="display-4">Users</h1>
     <div>
-        <button class="addButton" role="button" onclick="create(0);">+ User</button>
+        <button class="addButton" role="button" onclick="create();">+ User</button>
     </div>
     @if (Model.Data != null)
     {
@@ -52,11 +52,9 @@
                 "info": false,
                 "scrollx": false
             });
-        
     });
-    function create(id) {
-        var url = '@Url.Action("User", "Users", new {id = "_id" })';
-        var urlWithId = url.replace('_id', id);
-        window.location.href = urlWithId;
+    function create() {
+        var url = '@Url.Action("User", "Users", new {id = 0 })';
+        window.location.href = url;
     }
 </script>

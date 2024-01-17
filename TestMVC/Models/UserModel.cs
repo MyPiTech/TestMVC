@@ -20,6 +20,6 @@ namespace TestMVC.Models
         [Display(Name = "Notes ")]
         public string? Notes { get; set; }
 
-        public UserDto ToDto() => new UserDto { Id = Id, FirstName = FirstName, LastName = LastName, Notes = Notes };
+        public UserDto ToDto() => new() { Id = Id, FirstName = FirstName, LastName = LastName, Notes = Notes };
     }
 }

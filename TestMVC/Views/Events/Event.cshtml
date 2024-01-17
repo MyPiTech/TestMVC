@@ -1,0 +1,59 @@
+﻿@model TestMVC.Models.EventModel
+
+@{
+    ViewData["Title"] = "User";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    var buttonText = "Add";
+    if (Model != null && Model.Id != 0)
+    {
+        buttonText = "Update";
+    }
+}
+
+<div class="text-center">
+    <h1 class="display-4">Event</h1>
+    
+    <div class="row">
+        <div class="center alntxtleft">
+            <form asp-action="Event">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <div class="form-group">
+                    <input asp-for="Id" class="form-control" type="hidden" />
+                    <input asp-for="UserId" class="form-control" type="hidden" />
+                </div>
+                <div class="form-group">
+                    <label asp-for="Title" class="control-label"></label>
+                    <input asp-for="Title" class="form-control" />
+                    <span asp-validation-for="Title" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Location" class="control-label"></label>
+                    <input asp-for="Location" class="form-control" />
+                    <span asp-validation-for="Location" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Start" class="control-label"></label>
+                    <input asp-for="Start" class="form-control" />
+                    <span asp-validation-for="Start" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Duration" class="control-label"></label>
+                    <input asp-for="Duration" class="form-control" />
+                    <span asp-validation-for="Duration" class="text-danger"></span>
+                </div>
+                <div class="form-group" style="padding-top: 10px">
+                    <input type="submit" value="@buttonText" class="btn btn-primary" />
+                    <div>
+                        <a asp-action="Index" asp-route-userId=@Model?.UserId>Back to List</a>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

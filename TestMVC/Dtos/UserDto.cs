@@ -12,6 +12,6 @@ namespace TestMVC.Dtos
         public string? LastName { get; set; }
         public string? Notes { get; set; }
 
-        public UserModel ToModel() => new UserModel { Id = Id, FirstName = FirstName, LastName = LastName, Notes = Notes };
+        public UserModel ToModel() => new() { Id = Id, FirstName = FirstName, LastName = LastName, Notes = Notes };
     }
 }
