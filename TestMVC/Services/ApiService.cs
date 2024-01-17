@@ -25,7 +25,7 @@ namespace TestMVC.Services
         {
             try
             {
-                var apiRoute = GetRoute(typeof(R), newR);
+                var apiRoute = GetRoute(newR);
 
                 R[]? response = await _client.GetFromJsonAsync<R[]>(apiRoute, new JsonSerializerOptions(JsonSerializerDefaults.Web), token);
 
@@ -42,7 +42,7 @@ namespace TestMVC.Services
         {
             try
             {
-                var apiRoute = GetRoute(typeof(R), newR, true);
+                var apiRoute = GetRoute(newR, true);
 
                 R? response = await _client.GetFromJsonAsync<R>(apiRoute, new JsonSerializerOptions(JsonSerializerDefaults.Web), token);
 
@@ -58,7 +58,7 @@ namespace TestMVC.Services
         public async Task AddAsync(R dto, CancellationToken token = default) {
             try
             {
-                var apiRoute = GetRoute(typeof(R), dto);
+                var apiRoute = GetRoute(dto);
                 await _client.PostAsJsonAsync(apiRoute, dto, token);
             }
             catch (Exception ex)
@@ -71,7 +71,7 @@ namespace TestMVC.Services
         {
             try
             {
-                var apiRoute = GetRoute(typeof(R), dto, true);
+                var apiRoute = GetRoute(dto, true);
                 await _client.PutAsJsonAsync(apiRoute, dto, token);
             }
             catch (Exception ex)
@@ -84,7 +84,7 @@ namespace TestMVC.Services
         {
             try
             {
-                var apiRoute = GetRoute(typeof(R), newR, true);
+                var apiRoute = GetRoute(newR, true);
                 await _client.DeleteAsync(apiRoute, token);
             }
             catch (Exception ex)
@@ -93,40 +93,23 @@ namespace TestMVC.Services
             }
         }
 
-        private static string GetRoute(Type t, Func<R>? newR, bool appendPrimary = false)
+        private static string GetRoute(Func<R>? newR, bool appendPrimary = false)
         {
-            if (Attribute.GetCustomAttribute(t, typeof(ApiRouteAttribute)) is not ApiRouteAttribute apiRoute) 
-                throw new Exception("Route not found.");
-
-            var route = apiRoute.Route;
-
-            if (newR != null) {
+            
+            if (newR != null)
+            {
                 var returnDto = newR();
-                var props = t.GetProperties().Where(p => Attribute.IsDefined(p, typeof(ApiKeyAttribute)));
-                foreach (var prop in props)
-                {
-                    var keyAttribute = prop.GetCustomAttribute<ApiKeyAttribute>();
-                    if (keyAttribute != null)
-                    {
-                        var value = prop.GetValue(returnDto);
-                        if (keyAttribute.IsPrimary && appendPrimary)
-                        {
-                            route = $"{route}/{value}";
-                        }
-                        else 
-                        {
-                            var pattern = $"{{{keyAttribute.ApiRouteParam}}}";
-                            route = route.Replace(pattern, value?.ToString() ?? string.Empty);
-                        }
-                    }
-                }
+                return GetRoute(returnDto, appendPrimary);
             }
 
-            return route;
+            return GetRoute(dto: null, appendPrimary); 
         }
-        private static string GetRoute(Type t, R dto, bool appendPrimary = false)
+
+        //Ideally the reflection would occur at startup and the routes would be put into memory.
+        private static string GetRoute(R? dto, bool appendPrimary = false)
         {
-            if (Attribute.GetCustomAttribute(t, typeof(ApiRouteAttribute)) is not ApiRouteAttribute apiRoute)
+            Type rType = typeof(R);
+            if (Attribute.GetCustomAttribute(rType, typeof(ApiRouteAttribute)) is not ApiRouteAttribute apiRoute)
                 throw new Exception("Route not found.");
 
             var route = apiRoute.Route;
@@ -134,7 +117,7 @@ namespace TestMVC.Services
             if (dto != null)
             {
                 var returnDto = dto;
-                var props = t.GetProperties().Where(p => Attribute.IsDefined(p, typeof(ApiKeyAttribute)));
+                var props = rType.GetProperties().Where(p => Attribute.IsDefined(p, typeof(ApiKeyAttribute)));
                 foreach (var prop in props)
                 {
                     var keyAttribute = prop.GetCustomAttribute<ApiKeyAttribute>();
