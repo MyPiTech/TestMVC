@@ -8,10 +8,15 @@ namespace TestMVC.Dtos
     {
         [ApiKey]
         public int Id { get; set; }
-        public string? FirstName { get; set; }
-        public string? LastName { get; set; }
+        public string FirstName { get; set; } = string.Empty;
+        public string LastName { get; set; } = string.Empty;
         public string? Notes { get; set; }
 
-        public UserModel ToModel() => new() { Id = Id, FirstName = FirstName, LastName = LastName, Notes = Notes };
+        public UserModel ToModel() => new() { 
+            Id = Id, 
+            FirstName = FirstName, 
+            LastName = LastName, 
+            Notes = Notes 
+        };
     }
 }
