@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using System.Reflection;
 using TestMVC.Dtos;
 using TestMVC.Models;
 using TestMVC.Services;
@@ -18,7 +17,7 @@ namespace TestMVC.Controllers
         }
         public async Task<IActionResult> IndexAsync(int userId, CancellationToken token)
         {
-            var events = await _eventApiService.GetAllAsync(()=> new EventDto { UserId = userId },token);
+            var events = await _eventApiService.GetAllAsync(() => new EventDto { UserId = userId },token);
             return View(new EventsModel { UserId = userId, Data = events });
         }
 

@@ -1,4 +1,5 @@
-﻿using System.Reflection;
+﻿using Microsoft.Extensions.Caching.Memory;
+using System.Reflection;
 using System.Text.Json;
 using TestMVC.Attributes;
 
@@ -21,7 +22,7 @@ namespace TestMVC.Services
         }
 
         public async Task<R[]?> GetAllAsync(CancellationToken token = default)
-        { 
+        {
             return await GetAllAsync(null, token);
         }
 
@@ -59,10 +60,11 @@ namespace TestMVC.Services
             return null;
         }
 
-        public async Task AddAsync(R dto, CancellationToken token = default) {
+        public async Task AddAsync(R dto, CancellationToken token = default)
+        {
             try
             {
-                var apiRoute = GetRoute(dto);
+                var apiRoute = GetRoute(() => dto);
                 await _client.PostAsJsonAsync(apiRoute, dto, _JsonWriteOptions, token);
             }
             catch (Exception ex)
@@ -75,7 +77,7 @@ namespace TestMVC.Services
         {
             try
             {
-                var apiRoute = GetRoute(dto, true);
+                var apiRoute = GetRoute(() => dto, true);
                 await _client.PutAsJsonAsync(apiRoute, dto, _JsonWriteOptions, token);
             }
             catch (Exception ex)
@@ -97,22 +99,20 @@ namespace TestMVC.Services
             }
         }
 
-        private static string GetRoute(Func<R>? newR, bool appendPrimary = false)
+        private string GetRoute(Func<R>? newR, bool appendPrimary = false)
         {
-            
             if (newR != null)
             {
-                var returnDto = newR();
-                return GetRoute(returnDto, appendPrimary);
+                return GetRouteString(newR(), appendPrimary);
             }
 
-            return GetRoute(dto: null, appendPrimary); 
+            return GetRouteString(dto: null, appendPrimary);
         }
 
-        //Ideally the reflection would occur at startup and the routes would be put into memory.
-        private static string GetRoute(R? dto, bool appendPrimary = false)
+        private static string GetRouteString(R? dto, bool appendPrimary = false)
         {
             Type rType = typeof(R);
+
             if (Attribute.GetCustomAttribute(rType, typeof(ApiRouteAttribute)) is not ApiRouteAttribute apiRoute)
                 throw new Exception("Route not found.");
 
